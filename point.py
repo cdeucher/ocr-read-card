@@ -1,5 +1,5 @@
 # USAGE
-# python point.py --image real.jpg --path points/ --pointer point.png --pointer1 point1.png
+# python point.py --pointer point.png --pointer1 point1.png
 from imutils.perspective import four_point_transform
 from imutils import contours
 from pyzbar import pyzbar

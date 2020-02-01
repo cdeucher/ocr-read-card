@@ -106,11 +106,14 @@ def barcod(image):
     barcodeData = ''
     #print('barcodes',barcodes)
     if not barcodes:
+        #https://stackoverflow.com/questions/50080949/qr-code-detection-from-pyzbar-with-camera-image
         mask = cv2.inRange(image,(0,0,0),(200,200,200))
+        cv2.imwrite('cut/mask.jpg',mask) 
         thresholded = cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
-        inverted = 255-thresholded # black-in-white
+        image = 255-thresholded # black-in-white
+        cv2.imwrite('cut/fliped.jpg',image) 
 
-        barcodes = pyzbar.decode(inverted)
+        barcodes = pyzbar.decode(image)        
         print('fliped barcodes')#,barcodes)
 
     # loop over the detected barcodes
@@ -130,6 +133,7 @@ def barcod(image):
         cv2.putText(image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     
         # print the barcode type and data to the terminal
+        cv2.imwrite('cut/bar_cod.jpg',image) 
         print("[INFO] Found {} barcode: {}".format(barcodeType, barcodeData))
 
     return barcodeData    
