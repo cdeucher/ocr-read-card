@@ -1,0 +1,4 @@
+imutils
+scipy
+pyzbar
+opencv-python

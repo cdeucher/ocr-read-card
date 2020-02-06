@@ -12,18 +12,32 @@ def mathc_img(frame, Target, value):
     threshold = value
     loc = np.where(res >= threshold)
     is_match = 0
+
+    #print( loc  )
+
     for pt in zip(*loc[::-1]):
         # cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7, 249, 151), 2)
         cv2.circle(img_gray, pt, 50, (0, 255, 0), 2)  
         return pt, img_gray
 #End
 
-def cut_colums(point, point1, img_gray):
+def cut_colums(point, point1, point2, img_gray):
     # y, altura,   x, largura
-    print('cut comuns:', point[1] , 1600 , point[0] , point1[0] )
-    tmp = img_gray[ point[1] : 1600 , point[0] : point1[0]+100 ]
+    print('cut comuns:', point[1] , point2[1] , point[0] , point1[0] )
+    tmp = img_gray[ point[1] : point2[1] , point[0] : point1[0]+100 ]
     
     return tmp
+#End
+
+def resize(img):
+    scale_percent = 90 # percent of original size
+    width = int(img.shape[1] * scale_percent / 100)
+    height = int(img.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    # resize image
+    resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+
+    return resized
 #End
 
 def sum_pixel(crop_img, start, end):
@@ -34,27 +48,29 @@ def sum_pixel(crop_img, start, end):
     return n    
 #End
 
-def get_cicles(output, x, y, base, line):
-    #base = 172 #espaço entre letras
+def get_cicles(output, y, base, line, answer_sensor):
+    print(' output: ',output.shape, y, base, line)  
 
-    cicle1, cicle2, cicle3, cicle4, cicle5 = (x, y), (x+base, y),(x+(base*2), y),(x+(base*3), y),(x+(base*4), y)
+    cicle_range = int(base/3) 
+    x =  int( ((((((output.shape[1] /2)/2)/2)/2)/2)/2) )  
+    xx = int(x*11)
+    cicle1, cicle2, cicle3, cicle4, cicle5 = (xx, y), (xx+base, y),(xx+(base*2), y),(xx+(base*3), y),(xx+(base*4), y)
     cicles = [cicle1, cicle2, cicle3, cicle4, cicle5]
     key, answer, count = 0, -1, 99999
     for cicle in cicles:
         key = key+1
         #desenha circulo
-        cv2.circle(output, cicle, 45 , (0, 255, 0), 1)
+        cv2.circle(output, cicle, cicle_range , (0, 255, 0), 1)
         #recorta circulo
         x, y = cicle
-        r = 45
 
-        crop_img1  = output[( y-r ):( y+r ), ( x-r ):( x+r )]
+        crop_img1  = output[( y-cicle_range ):( y+cicle_range ), ( x-cicle_range ):( x+cicle_range )]
         cv2.imwrite('cut/'+str(line)+'_crop_img'+str(key)+'.png',crop_img1)
         
         n_white_pix = sum_pixel(crop_img1, 240, 260)
         print('White pixels:', n_white_pix)
 
-        if(n_white_pix < count and n_white_pix < 3000):
+        if(n_white_pix < count and n_white_pix < answer_sensor):
            count  = n_white_pix
            answer = key
            print( 'check', count, answer )        
@@ -75,7 +91,7 @@ def fileExists(file):
         return True
     else:
         return False
-#End
+#End    
 
 def save_answer(pre_image_name, decode, answer1, answer2, answer3):
     if not fileExists("answers.txt") :
@@ -89,7 +105,7 @@ def save_answer(pre_image_name, decode, answer1, answer2, answer3):
 
 #https://www.pyimagesearch.com/2018/05/21/an-opencv-barcode-and-qr-code-scanner-with-zbar/
 def cut_barcod(image, point):
-    y, heigth, x, width = 10, point[1], 10, 1800
+    y, heigth, x, width = 10, point[1], 10, 2800
     # y, altura,   x, largura
     #print( y, heigth, x, width )
     tmp = image[ y: heigth, x: width ]
