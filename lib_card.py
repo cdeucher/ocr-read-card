@@ -48,15 +48,41 @@ def sum_pixel(crop_img, start, end):
     return n    
 #End
 
+def calc_list_answers(list_answers):
+    answer, number_ok = -1, 0
+
+    median = np.median(list_answers)
+    range_accept = median - (median/3) 
+
+    print("Median: {}  , Accept: {}".format(median, range_accept))    
+
+    for index in range(len(list_answers)):
+        print("index: {} | value: {}".format(index, list_answers[index]))
+
+        if list_answers[index] < range_accept :
+           print("       Accept: {} | Index: {}".format(list_answers[index], index))
+           answer = index
+           number_ok = number_ok + 1
+
+    if(number_ok > 1): # se mais que uma opcao marcada
+      print("       Multiple choices: {}".format(number_ok))
+      answer = -1
+    if(number_ok == 0):
+      print("       no choice: {}, answer: {}".format(number_ok, answer))      
+
+    return answer
+#End
+
 def get_cicles(output, y, base, line, answer_sensor):
     print(' output: ',output.shape, y, base, line)  
 
-    cicle_range = int(base/3) 
+    cicle_range = int(base/4) 
     x =  int( ((((((output.shape[1] /2)/2)/2)/2)/2)/2) )  
     xx = int(x*11)
     cicle1, cicle2, cicle3, cicle4, cicle5 = (xx, y), (xx+base, y),(xx+(base*2), y),(xx+(base*3), y),(xx+(base*4), y)
     cicles = [cicle1, cicle2, cicle3, cicle4, cicle5]
-    key, answer, count = 0, -1, 99999
+    list_answers = []
+    key, answer, count, debug = 0, -1, 99999, []
     for cicle in cicles:
         key = key+1
         #desenha circulo
@@ -65,19 +91,17 @@ def get_cicles(output, y, base, line, answer_sensor):
         x, y = cicle
 
         crop_img1  = output[( y-cicle_range ):( y+cicle_range ), ( x-cicle_range ):( x+cicle_range )]
-        cv2.imwrite('cut/'+str(line)+'_crop_img'+str(key)+'.png',crop_img1)
+        debug.append(crop_img1)
+        #cv2.imwrite('cut/'+str(line)+'_crop_img'+str(key)+'.png',crop_img1)
         
-        n_white_pix = sum_pixel(crop_img1, 240, 260)
-        print('White pixels:', n_white_pix)
-
-        if(n_white_pix < count and n_white_pix < answer_sensor):
-           count  = n_white_pix
-           answer = key
-           print( 'check', count, answer )        
+        n_white_pix = sum_pixel(crop_img1, 240, 260) #conta pixel entre 240 e 260 no RGB
+       
+        list_answers.append(n_white_pix)
     
-    print('Resposta marcada:', answer) 
     print('-----------------------------------------------') 
-    return output, answer   
+    answer = calc_list_answers(list_answers)
+
+    return debug, answer   
 #End
 
 def listdir(dirpath):
@@ -110,11 +134,11 @@ def cut_barcod(image, point):
     #print( y, heigth, x, width )
     tmp = image[ y: heigth, x: width ]
 
-    cv2.imwrite('cut/bar_cod.jpg',tmp) 
+    #cv2.imwrite('cut/bar_cod.jpg',tmp) 
 
-    decode = barcod(tmp)
+    decode, decode_img = barcod(tmp)
 
-    return decode
+    return decode, decode_img
 #End
 
 def barcod(image):
@@ -124,10 +148,10 @@ def barcod(image):
     if not barcodes:
         #https://stackoverflow.com/questions/50080949/qr-code-detection-from-pyzbar-with-camera-image
         mask = cv2.inRange(image,(0,0,0),(200,200,200))
-        cv2.imwrite('cut/mask.jpg',mask) 
+        #cv2.imwrite('cut/mask.jpg',mask) 
         thresholded = cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
         image = 255-thresholded # black-in-white
-        cv2.imwrite('cut/fliped.jpg',image) 
+        #cv2.imwrite('cut/fliped.jpg',image) 
 
         barcodes = pyzbar.decode(image)        
         print('fliped barcodes')#,barcodes)
@@ -149,8 +173,8 @@ def barcod(image):
         cv2.putText(image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     
         # print the barcode type and data to the terminal
-        cv2.imwrite('cut/bar_cod.jpg',image) 
+        #cv2.imwrite('cut/bar_cod.jpg',image) 
         print("[INFO] Found {} barcode: {}".format(barcodeType, barcodeData))
 
-    return barcodeData    
+    return barcodeData, image   
 #End   
