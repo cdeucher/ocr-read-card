@@ -3,7 +3,7 @@ import cv2, os
 import os.path
 from pyzbar import pyzbar
 
-def mathc_img(frame, Target, value):
+def math_img(frame, Target, value):
     # image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # img_rgb = cv2.imread(image)
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -21,10 +21,29 @@ def mathc_img(frame, Target, value):
         return pt, img_gray
 #End
 
+def math_answer(img_gray, list1):
+    Target_gray = cv2.cvtColor(list1, cv2.COLOR_BGR2GRAY)
+
+    res = cv2.matchTemplate(img_gray, Target_gray, cv2.TM_CCOEFF_NORMED)
+    loc = np.where(res >= 0.9)
+    is_match = 0
+    answers = []
+    for pt in zip(*loc[::-1]):
+        is_match = is_match+1
+        cv2.circle(img_gray, pt, 50, (0, 255, 0), 2)  
+        answers.append(pt)
+
+        if is_match >= 6 :
+            break
+
+    print('continue',len(answers))
+    return answers, img_gray    
+#End
+
 def cut_colums(point, point1, point2, img_gray):
     # y, altura,   x, largura
     print('cut comuns:', point[1] , point2[1] , point[0] , point1[0] )
-    tmp = img_gray[ point[1] : point2[1] , point[0] : point1[0]+100 ]
+    tmp = img_gray[ point[1] : point2[1]+200 , point[0] : point1[0]+100 ]
     
     return tmp
 #End
@@ -52,7 +71,7 @@ def calc_list_answers(list_answers):
     answer, number_ok = -1, 0
 
     median = np.median(list_answers)
-    range_accept = median - (median/3) 
+    range_accept = median - (median/4) 
 
     print("Median: {}  , Accept: {}".format(median, range_accept))    
 
@@ -73,12 +92,10 @@ def calc_list_answers(list_answers):
     return answer
 #End
 
-def get_cicles(output, y, base, line, answer_sensor):
+def get_cicles(output, y, x, xx, base, line, answer_sensor):
     print(' output: ',output.shape, y, base, line)  
 
-    cicle_range = int(base/4) 
-    x =  int( ((((((output.shape[1] /2)/2)/2)/2)/2)/2) )  
-    xx = int(x*11)
+    cicle_range = int(base/3) 
     cicle1, cicle2, cicle3, cicle4, cicle5 = (xx, y), (xx+base, y),(xx+(base*2), y),(xx+(base*3), y),(xx+(base*4), y)
     cicles = [cicle1, cicle2, cicle3, cicle4, cicle5]
     list_answers = []
@@ -98,7 +115,7 @@ def get_cicles(output, y, base, line, answer_sensor):
        
         list_answers.append(n_white_pix)
     
-    print('-----------------------------------------------') 
+    print(' {} -----------------------------------------------'.format(line)) 
     answer = calc_list_answers(list_answers)
 
     return debug, answer   
@@ -117,13 +134,19 @@ def fileExists(file):
         return False
 #End    
 
-def save_answer(pre_image_name, decode, answer1, answer2, answer3):
+def save_answer(pre_image_name, decode, answers):
+    words = ['A','B','C','D','E','F','G','H'] 
+    decode = decode.replace("+", ";")
+    text   = pre_image_name+';'+decode
+    for index in range(len(answers)) :
+       text = text+';'+str(words[answers[index]])
+
     if not fileExists("answers.txt") :
         f= open("answers.txt","w+")
     else:
         f= open("answers.txt","a+")
 
-    f.write(pre_image_name+';'+decode+';'+str(answer1)+';'+str(answer2)+';'+str(answer3)+ "\n")
+    f.write(text+ "\n")
     f.close() 
 #End    
 
