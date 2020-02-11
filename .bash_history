@@ -160,3 +160,121 @@ ll
 ls -la
 git remote -v
 exit
+history
+python point.py
+ll
+ls -la
+history
+source /tmp/env/bin/activate
+python point.py
+python point.py
+python point.py
+python point.py
+python point.py
+python point.py
+python point.py
+python point.py
+python point.py
+python point.py --img Untitled_02102020_150451_001.jpg
+python point.py --img Untitled_02102020_150451_001.jpg
+python point.py --img Untitled_02102020_150451_001.jpg
+python point.py --img Untitled_02102020_150451_001.jpg
+python point.py --img Untitled_02102020_150451_001.jpg
+python point.py --img Untitled_02102020_150451_001.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+cd test/cli
+cd test/cicles/
+dir
+ls -la
+python app.py 
+python app.py 
+python app.py 
+python app.py 
+cd ..
+ll
+ls -la
+cd ..
+ls -la
+history
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_150451.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py
+python point.py --img Untitled_02102020_191435_001.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_191435_001.jpg
+python point.py --img Untitled_02102020_173703.jpg
+exit
