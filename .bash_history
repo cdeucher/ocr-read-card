@@ -278,3 +278,34 @@ python point.py --img Untitled_02102020_173703.jpg
 python point.py --img Untitled_02102020_191435_001.jpg
 python point.py --img Untitled_02102020_173703.jpg
 exit
+history
+python point.py --img Untitled_02102020_173703.jpg
+source /tmp/env/bin/activate
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+python point.py --img Untitled_02102020_173703.jpg
+exit

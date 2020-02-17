@@ -21,25 +21,6 @@ def math_img(frame, Target, value):
         return pt, img_gray
 #End
 
-def math_answer(img_gray, list1):
-    Target_gray = cv2.cvtColor(list1, cv2.COLOR_BGR2GRAY)
-
-    res = cv2.matchTemplate(img_gray, Target_gray, cv2.TM_CCOEFF_NORMED)
-    loc = np.where(res >= 0.9)
-    is_match = 0
-    answers = []
-    for pt in zip(*loc[::-1]):
-        is_match = is_match+1
-        cv2.circle(img_gray, pt, 50, (0, 255, 0), 2)  
-        answers.append(pt)
-
-        if is_match >= 6 :
-            break
-
-    print('continue',len(answers))
-    return answers, img_gray    
-#End
-
 def cut_colums(point, point1, point2, img_gray):
     # y, altura,   x, largura
     print('cut comuns:', point[1] , point2[1] , point[0] , point1[0] )
@@ -92,33 +73,67 @@ def calc_list_answers(list_answers):
     return answer
 #End
 
-def get_cicles(output, y, x, xx, base, line, answer_sensor):
-    print(' output: ',output.shape, y, base, line)  
+def math_answer(img_gray, path):
+    questions = listdir(path)
+    entries   = []
 
-    cicle_range = int(base/3) 
-    cicle1, cicle2, cicle3, cicle4, cicle5 = (xx, y), (xx+base, y),(xx+(base*2), y),(xx+(base*3), y),(xx+(base*4), y)
+    for question in questions :      
+        print('path',path+'/'+question)
+        Target      = cv2.imread(path+'/'+question)
+        Target_gray = cv2.cvtColor(Target, cv2.COLOR_BGR2GRAY)
+
+        res = cv2.matchTemplate(img_gray, Target_gray, cv2.TM_CCOEFF_NORMED)
+        loc = np.where(res >= 1)
+        if len(loc[0]) > 0:
+            print (' {} found 1 {}'.format(question, loc[0]))        
+        if len(loc[0]) == 0:
+            loc = np.where(res >= 0.9)
+            print (' {} found 0.9 {}'.format(question, loc[0]))  
+        if len(loc[0]) == 0:
+            loc = np.where(res >= 0.8)
+            print (' {} found 0.8 {}'.format(question, loc[0]))  
+        if len(loc[0]) == 0:
+            print (' {} not found {}'.format(question, loc[0]))  
+
+
+        for pt in zip(*loc[::-1]):
+            cv2.circle(img_gray, pt, 50, (0, 255, 0), 2)  
+            entries.append(pt)  
+            print (' {} entries'.format(pt)) 
+            break 
+
+    return entries, img_gray    
+#End
+
+def get_circles(output, x, y, base, line):
+    print(' Line: {} -----------------------------------------------'.format(line))     
+    #print(' get_cicles: ',output.shape, x, y, base, line)  
+
+    cicle1, cicle2, cicle3, cicle4, cicle5 = (x, y), (x+base*4, y),(x+(base*8), y),(x+(base*12), y),(x+(base*16), y)
     cicles = [cicle1, cicle2, cicle3, cicle4, cicle5]
     list_answers = []
     key, answer, count, debug = 0, -1, 99999, []
     for cicle in cicles:
         key = key+1
         #desenha circulo
-        cv2.circle(output, cicle, cicle_range , (0, 255, 0), 1)
+        cv2.circle(output, cicle, base , (0, 255, 0), 1)
         #recorta circulo
-        x, y = cicle
+        xx, yy = cicle
 
-        crop_img1  = output[( y-cicle_range ):( y+cicle_range ), ( x-cicle_range ):( x+cicle_range )]
+        #print('line', line , yy - base, yy + base,  xx - base, xx + base)
+        crop_img1  = output[ yy - base: yy + base , xx - base: xx + base]
         debug.append(crop_img1)
-        #cv2.imwrite('cut/'+str(line)+'_crop_img'+str(key)+'.png',crop_img1)
+
+        cv2.imwrite('cut/'+str(line)+'_crop_img'+str(key)+'.png',crop_img1)
         
         n_white_pix = sum_pixel(crop_img1, 240, 260) #conta pixel entre 240 e 260 no RGB
        
         list_answers.append(n_white_pix)
-    
-    print(' {} -----------------------------------------------'.format(line)) 
+    #print(' calc: {} --'.format(line))    
     answer = calc_list_answers(list_answers)
+    #print(' End: {} -----------------------------------------------'.format(line)) 
 
-    return debug, answer   
+    return debug, answer, output   
 #End
 
 def listdir(dirpath):
