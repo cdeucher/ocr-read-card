@@ -18,19 +18,21 @@ def math_img(frame, Target, value):
     for pt in zip(*loc[::-1]):
         # cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7, 249, 151), 2)
         cv2.circle(img_gray, pt, 50, (0, 255, 0), 2)  
-        return pt, img_gray
+        return pt, img_gray, False
+
+    return (0,0), img_gray, True     
 #End
 
-def cut_colums(point, point1, point2, img_gray):
+def cut_colums(point, point1, point2, image):
     # y, altura,   x, largura
     print('cut comuns:', point[1] , point2[1] , point[0] , point1[0] )
-    tmp = img_gray[ point[1] : point2[1]+200 , point[0] : point1[0]+100 ]
+    tmp = image[ point[1] : point2[1]+200 , point[0] : point1[0]+100 ]
     
     return tmp
 #End
 
 def resize(img):
-    scale_percent = 90 # percent of original size
+    scale_percent = 20 # percent of original size
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
     dim = (width, height)
@@ -52,7 +54,7 @@ def calc_list_answers(list_answers):
     answer, number_ok = -1, 0
 
     median = np.median(list_answers)
-    range_accept = median - (median/4) 
+    range_accept = median - (median/5) 
 
     print("Median: {}  , Accept: {}".format(median, range_accept))    
 
@@ -69,44 +71,93 @@ def calc_list_answers(list_answers):
       answer = -1
     if(number_ok == 0):
       print("       no choice: {}, answer: {}".format(number_ok, answer))      
+      answer = 10
 
     return answer
 #End
 
-def math_answer(img_gray, path):
-    questions = listdir(path)
-    entries   = []
+def black_in_white(image):
+    mask = cv2.inRange(image,(0,0,0),(200,200,200))
+    thresholded = cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
+    image = 255-thresholded # black-in-white
 
-    for question in questions :      
-        print('path',path+'/'+question)
-        Target      = cv2.imread(path+'/'+question)
+    return image 
+#End   
+def try_read(path, question, img_gray, number_even):
+    print('== {} - {} - {} =='.format(number_even, path, question) )
+    if os.path.exists(path+'/'+question) :
+        Target = cv2.imread(path+'/'+question)
+
+        if number_even % 2 == 0:
+            Target      = black_in_white(Target)
+
         Target_gray = cv2.cvtColor(Target, cv2.COLOR_BGR2GRAY)
+        #print('shape : Target {} -- img_gray {}'.format(Target_gray.shape, img_gray.shape))   
+        #cv2.imwrite('cut/white_'+question,Target_gray) 
 
-        res = cv2.matchTemplate(img_gray, Target_gray, cv2.TM_CCOEFF_NORMED)
+        #output   = black_in_white(answer_img)
+        #img_gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
+        #cv2.imwrite('cut/output_'+question, img_gray) 
+        if img_gray.shape[1] != 0 and img_gray.shape[0] != 0:
+            res = cv2.matchTemplate(img_gray, Target_gray, cv2.TM_CCOEFF_NORMED)
+        else:
+            res = []    
+    else:
+        res = []
+    #EndIf        
+    return res
+#End    
+
+def check_number(res, question):
+    if len(res) <= 0 :
+        return False, ()
+    else:    
         loc = np.where(res >= 1)
-        if len(loc[0]) > 0:
-            print (' {} found 1 {}'.format(question, loc[0]))        
-        if len(loc[0]) == 0:
-            loc = np.where(res >= 0.9)
-            print (' {} found 0.9 {}'.format(question, loc[0]))  
-        if len(loc[0]) == 0:
-            loc = np.where(res >= 0.8)
-            print (' {} found 0.8 {}'.format(question, loc[0]))  
-        if len(loc[0]) == 0:
-            print (' {} not found {}'.format(question, loc[0]))  
 
+    if len(loc[0]) > 0:
+        print (' {} found 1 {}'.format(question, loc[0]))                  
+    if len(loc[0]) == 0:
+        loc = np.where(res >= 0.9)
+        print (' {} found 0.9 {}'.format(question, loc[0]))  
+    if len(loc[0]) == 0:
+        loc = np.where(res >= 0.8)
+        print (' {} found 0.8 {}'.format(question, loc[0]))  
 
-        for pt in zip(*loc[::-1]):
-            cv2.circle(img_gray, pt, 50, (0, 255, 0), 2)  
-            entries.append(pt)  
-            print (' {} entries'.format(pt)) 
-            break 
+    if len(loc[0]) == 0:
+        print (' {} not found {}'.format(question, loc[0])) 
+        return False, loc 
+    else:
+        return True, loc      
+#End    
 
-    return entries, img_gray    
+def math_answer(img_gray, path, path_fix):
+    questions = ['qa1.png', 'qb2.png', 'qc3.png', 'qd4.png', 'qf5.png', 'qg6.png', 'qh7.png', 'qi8.png', 'qj9.png', 'ql10.png', 'qm11.png', 'qn12.png', 'qo13.png', 'qq14.png', 'qr15.png', 'qs16.png'] #listdir(path)
+    entries   = []
+    
+    number_even = 0
+    for question in questions :      
+        number_even = number_even+1
+
+        res     = try_read(path, question, img_gray, number_even)
+        ok, loc = check_number(res, question)
+        if not ok :
+            res = try_read(path_fix, question, img_gray, number_even)
+            ok, loc = check_number(res, question)   
+
+        if ok :
+            for pt in zip(*loc[::-1]):  # invert list *loc[::-1]
+                cv2.circle(img_gray, pt, 50, (0, 255, 0), 2) 
+
+                entries.append(pt)  
+                print (' {} - {} entries'.format(len(pt) , pt )) 
+                break 
+   
+    print (' total: {} entries'.format( len(entries) )) 
+    return entries, img_gray, ok    
 #End
 
 def get_circles(output, x, y, base, line):
-    print(' Line: {} -----------------------------------------------'.format(line))     
+    print(' Line: {} -----------------------------------------------'.format(str(int(line+1))))     
     #print(' get_cicles: ',output.shape, x, y, base, line)  
 
     cicle1, cicle2, cicle3, cicle4, cicle5 = (x, y), (x+base*4, y),(x+(base*8), y),(x+(base*12), y),(x+(base*16), y)
@@ -117,6 +168,7 @@ def get_circles(output, x, y, base, line):
         key = key+1
         #desenha circulo
         cv2.circle(output, cicle, base , (0, 255, 0), 1)
+
         #recorta circulo
         xx, yy = cicle
 
@@ -124,10 +176,11 @@ def get_circles(output, x, y, base, line):
         crop_img1  = output[ yy - base: yy + base , xx - base: xx + base]
         debug.append(crop_img1)
 
-        cv2.imwrite('cut/'+str(line)+'_crop_img'+str(key)+'.png',crop_img1)
+        #if line == 9 :
+        #cv2.imwrite('cut/'+str(line)+'_crop_img'+str(key)+'.png',crop_img1)
         
         n_white_pix = sum_pixel(crop_img1, 240, 260) #conta pixel entre 240 e 260 no RGB
-       
+        
         list_answers.append(n_white_pix)
     #print(' calc: {} --'.format(line))    
     answer = calc_list_answers(list_answers)
@@ -137,7 +190,6 @@ def get_circles(output, x, y, base, line):
 #End
 
 def listdir(dirpath):
-
     entries = os.listdir(dirpath)
     return entries
 #End    
@@ -150,7 +202,7 @@ def fileExists(file):
 #End    
 
 def save_answer(pre_image_name, decode, answers):
-    words = ['A','B','C','D','E','F','G','H'] 
+    words = ['A','B','C','D','E','F','G','H','I','J','X'] 
     decode = decode.replace("+", ";")
     text   = pre_image_name+';'+decode
     for index in range(len(answers)) :
@@ -167,7 +219,7 @@ def save_answer(pre_image_name, decode, answers):
 
 #https://www.pyimagesearch.com/2018/05/21/an-opencv-barcode-and-qr-code-scanner-with-zbar/
 def cut_barcod(image, point):
-    y, heigth, x, width = 10, point[1], 10, 2800
+    y, heigth, x, width = 10, point[1], 10, 3500
     # y, altura,   x, largura
     #print( y, heigth, x, width )
     tmp = image[ y: heigth, x: width ]
